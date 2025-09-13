@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сокращатель ссылок</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <nav class="navbar is-primary" role="navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+                <i class="fas fa-link mr-2"></i>
+                <strong>Сокращатель ссылок</strong>
+            </a>
+        </div>
+        <div class="navbar-menu">
+            <div class="navbar-end">
+                <a class="navbar-item" href="/">Главная</a>
+                <a class="navbar-item" href="/game.html">Игра</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <p class="card-header-title">
+                                <i class="fas fa-compress-arrows-alt mr-2"></i>
+                                Сократите вашу ссылку
+                            </p>
+                        </div>
+                        <div class="card-content">
+                            <div class="field">
+                                <label class="label">Введите URL для сокращения:</label>
+                                <div class="control has-icons-left">
+                                    <input 
+                                        class="input is-medium" 
+                                        type="url" 
+                                        id="urlInput" 
+                                        placeholder="https://example.com/very/long/url"
+                                        required
+                                    >
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-link"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <button 
+                                        class="button is-primary is-medium is-fullwidth" 
+                                        onclick="shortenLink()"
+                                        id="shortenBtn"
+                                    >
+                                        <span class="icon">
+                                            <i class="fas fa-magic"></i>
+                                        </span>
+                                        <span>Сократить ссылку</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-5" id="resultCard" style="display: none;">
+                        <div class="card-header">
+                            <p class="card-header-title">
+                                <i class="fas fa-check-circle mr-2 has-text-success"></i>
+                                Ваша сокращенная ссылка
+                            </p>
+                        </div>
+                        <div class="card-content">
+                            <div class="field">
+                                <label class="label">Короткая ссылка:</label>
+                                <div class="field has-addons">
+                                    <div class="control is-expanded">
+                                        <input 
+                                            class="input" 
+                                            type="text" 
+                                            id="shortUrl" 
+                                            readonly
+                                        >
+                                    </div>
+                                    <div class="control">
+                                        <button 
+                                            class="button is-info" 
+                                            onclick="copyToClipboard()"
+                                            id="copyBtn"
+                                        >
+                                            <span class="icon">
+                                                <i class="fas fa-copy"></i>
+                                            </span>
+                                            <span>Скопировать</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Исходная ссылка:</label>
+                                <p class="content" id="originalUrl"></p>
+                            </div>
+                            <div class="field">
+                                <label class="label">Короткий код:</label>
+                                <p class="content">
+                                    <code id="shortCode"></code>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="notification is-danger" id="errorNotification" style="display: none;">
+                        <button class="delete" onclick="hideError()"></button>
+                        <span id="errorMessage"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="/js/shortener.js"></script>
+</body>
+</html>

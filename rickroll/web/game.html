@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Атака рикроллов</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        .game-card {
+            min-height: 400px;
+        }
+        .link-display {
+            font-family: 'Courier New', monospace;
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: #f5f5f5;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 2px solid #dbdbdb;
+        }
+        .coin-display {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #363636;
+        }
+        .progress-display {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar is-primary" role="navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+                <i class="fas fa-gamepad mr-2"></i>
+                <strong>Атака рикроллов</strong>
+            </a>
+        </div>
+        <div class="navbar-menu">
+            <div class="navbar-end">
+                <a class="navbar-item" href="/">Главная</a>
+                <a class="navbar-item" href="/shortener.html">Сокращатель ссылок</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <div id="startScreen">
+                <div class="columns is-centered">
+                    <div class="column is-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <p class="card-header-title">
+                                    <i class="fas fa-play-circle mr-2"></i>
+                                    Атака рикроллов
+                                </p>
+                            </div>
+                            <div class="card-content">
+                                <div class="content">
+                                    <p>Мы гарантируем: благодаря сокращателю вы не узнаете, что за ссылкой, пока не нажмёте на нее.</p>
+                                    <h4>Как играть:</h4>
+                                    <ul>
+                                        <li>Вы увидите 50 коротких ссылок, по одной</li>
+                                        <li>Угадайте, является каждая ссылка рикроллом или нет</li>
+                                        <li>Нажмите <strong>"Перейти"</strong>, если думаете, что это полезная ссылка</li>
+                                        <li>Нажмите <strong>"Рикролл!"</strong>, если боитесь, что вас сейчас зарикроллят</li>
+                                        <li>Угадали? Получаете монету</li>
+                                        <li>Наберите <strong>20+ монет</strong> для победы!</li>
+                                    </ul>
+                                    <div class="notification is-warning">
+                                        <strong>Внимание:</strong> если вы перейдёте на рикролл, вы сразу <strong>проиграете!</strong>
+                                    </div>
+                                </div>
+                                <button class="button is-primary is-large is-fullwidth" onclick="startGame()">
+                                    <span class="icon">
+                                        <i class="fas fa-play"></i>
+                                    </span>
+                                    <span>Начать игру</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="gameScreen" style="display: none;">
+                <div class="columns">
+                    <div class="column">
+                        <div class="card coin-display">
+                            <div class="card-content has-text-centered">
+                                <p class="heading">Монеты</p>
+                                <p class="title">
+                                    <i class="fas fa-coins mr-2"></i>
+                                    <span id="coinCount">0</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="card progress-display">
+                            <div class="card-content has-text-centered">
+                                <p class="heading">Прогресс</p>
+                                <p class="title">
+                                    <span id="currentLink">0</span> / 50
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="columns is-centered">
+                    <div class="column is-8">
+                        <div class="card game-card">
+                            <div class="card-header">
+                                <p class="card-header-title">
+                                    <i class="fas fa-link mr-2"></i>
+                                    Текущая ссылка
+                                </p>
+                            </div>
+                            <div class="card-content has-text-centered">
+                                <div class="link-display mb-5" id="currentLinkDisplay">
+                                    Загрузка...
+                                </div>
+
+                                <div class="field is-grouped is-grouped-centered">
+                                    <div class="control">
+                                        <button 
+                                            class="button is-success is-large" 
+                                            onclick="makeGuess('not_rickroll')"
+                                            id="notRickrollBtn"
+                                        >
+                                            <span class="icon">
+                                                <i class="fas fa-check"></i>
+                                            </span>
+                                            <span>Перейти</span>
+                                        </button>
+                                    </div>
+                                    <div class="control">
+                                        <button 
+                                            class="button is-warning is-large" 
+                                            onclick="makeGuess('continue')"
+                                            id="continueBtn"
+                                        >
+                                            <span class="icon">
+                                                <i class="fas fa-ban"></i>
+                                            </span>
+                                            <span>Это рикролл!</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="endScreen" style="display: none;">
+                <div class="columns is-centered">
+                    <div class="column is-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <p class="card-header-title" id="endTitle">
+                                    <i class="fas fa-flag mr-2"></i>
+                                    Игра окончена
+                                </p>
+                            </div>
+                            <div class="card-content has-text-centered">
+                                <div id="winContent" style="display: none;">
+                                    <div class="notification is-success">
+                                        <h3 class="title is-3">🎉 Поздравляем!</h3>
+                                        <p class="subtitle">Вы выиграли игру!</p>
+                                    </div>
+                                    <div class="content">
+                                        <p><strong>Ваш флаг:</strong></p>
+                                        <div class="notification is-info">
+                                            <code id="flagDisplay" style="font-size: 1.2rem;"></code>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="loseContent" style="display: none;">
+                                    <div class="notification is-danger">
+                                        <h3 class="title is-3">💥 Игра окончена!</h3>
+                                        <p class="subtitle" id="loseReason">Вас зарикроллили!</p>
+                                    </div>
+                                </div>
+                                <div class="content">
+                                    <p><strong>Итоговый счет:</strong> <span id="finalScore"></span> монет</p>
+                                </div>
+                                <button class="button is-primary" onclick="resetGame()">
+                                    <span class="icon">
+                                        <i class="fas fa-redo"></i>
+                                    </span>
+                                    <span>Сыграть снова</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal" id="loadingModal">
+                <div class="modal-background"></div>
+                <div class="modal-content">
+                    <div class="box has-text-centered">
+                        <i class="fas fa-spinner fa-spin fa-3x mb-3"></i>
+                        <p>Загрузка...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="notification is-danger" id="errorNotification" style="display: none;">
+                <button class="delete" onclick="hideError()"></button>
+                <span id="errorMessage"></span>
+            </div>
+        </div>
+    </section>
+
+    <script src="/js/game.js"></script>
+</body>
+</html>
